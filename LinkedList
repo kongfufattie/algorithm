@@ -1,0 +1,127 @@
+// LinkedList.cpp : 定义控制台应用程序的入口点。
+//
+
+#include "stdafx.h"
+
+typedef struct node{
+	int data;
+	node* next;
+}node;
+
+void searchMid(node* head,node** mid){
+	node *temp=head;
+	while(head->next!=NULL&&head->next->next!=NULL){
+		head=head->next->next;
+		temp=temp->next;
+		*mid=temp;
+	}
+}
+
+node *reverse(node* head){
+	node *p1,*p2,*p3;
+	if(head==NULL||head->next==NULL) 
+		return head;
+	p1=head; p2=p1->next;
+	//每次要从上次处理的最后一个节点开始，因为只有这个节点的next是指向后面的
+	while(p2!=NULL){
+		p3=p2->next;//这里p2->next可以为NULL
+		p2->next=p1;//这里p1是上次循环的值，每次循环只处理一个指针
+		p1=p2;
+		p2=p3;
+	}
+	head->next=NULL;
+	return p1;
+}
+
+//根据num的值，返回head。简单的删除节点操作，需注意被删节点的定位和内存释放
+node *del(node *head,int num){
+	node *p1,*p2;
+	p1=head;
+	//链表节点的定位，注意判断顺序不能变
+	while(p1->data!=num&&p1->next!=NULL){
+		p2=p1;
+		p1=p1->next;
+	}
+	if(p1->data=num){
+		if(p1==head){
+			head=p1->next;
+		}else{
+			p2->next=p1->next;
+		}
+		//此处不能这样free p1，这样会导致返回的head指针地址有误
+		//delete p1;p1=NULL;
+	}else{
+		printf("no this num");
+	}
+	return head;
+}
+
+/*Microsoft
+ given list{l0,l1,...,ln},reorder to {l0,ln,l1,ln-1,l2,ln-2,...}
+ limit: space=O(1),value can not be changed*/
+//simple method:seperate into two parts, reverse one, and merge
+//linkedlist method
+void reorder(node* head){
+	if(head==NULL)
+		return;
+	node* h=head;
+	while(h->next!=NULL){
+		node* e1=h->next;
+		node* e=e1->next;
+		if(e==NULL)
+			return;
+		while(e!=NULL&&e->next!=NULL){
+			e1=e1->next;
+			e=e->next;
+		}
+		e->next=h->next;
+		h->next=e;
+		h=e->next;
+		e1->next=NULL;
+	}
+	return;
+}
+
+void printList(node* head){
+	while(head!=NULL){
+		printf("%d",head->data);
+		head=head->next;
+	}
+}
+
+void test1(){
+	node* a=new node;
+	a->data=0;
+	a->next=NULL;
+	for(int i=1;i<9;++i){
+		node* t=new node;
+		t->data=i;
+		t->next=a;
+		a=t;
+	}
+	printList(del(a,8));
+	printList(reverse(a));
+	node* mid=new node;
+	searchMid(a,&mid);
+}
+void test2(){
+	node* a=new node;
+	a->data=3;
+	a->next=NULL;
+	for(int i=2;i>0;--i){
+		node* t=new node;
+		t->data=i;
+		t->next=a;
+		a=t;
+	}
+	reorder(a);
+	printList(a);
+}
+int _tmain(int argc, _TCHAR* argv[])
+{
+	//test1();
+	test2();
+	getchar();
+	return 0;
+}
+
