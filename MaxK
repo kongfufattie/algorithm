@@ -1,0 +1,85 @@
+// MaxK.cpp : 定义控制台应用程序的入口点。
+//
+
+#include "stdafx.h"
+#include <math.h>
+#include <time.h>
+#include <stdlib.h>
+
+//如果用a=a+b那种方法，务必判断两个参数是否同一指针
+void swap(int* a,int* b)
+{
+	int temp=*a;
+	*a=*b;
+	*b=temp;
+}
+
+//左边全小于，右边大于等于
+int partition(int s[],int begin,int end)
+{
+	if(s==NULL||begin>end) return -1;
+	if(begin==end) return end;
+	int index=begin+rand()%(end-begin+1);
+	swap(&s[index],&s[end]);
+	int small=-1;
+	for(int index=0;index<end;++index){
+		if(s[index]<s[end]){
+			++small;
+			if(small!=index)
+				swap(&s[index],&s[small]);
+		}
+	}
+	++small;
+	swap(&s[small],&s[end]);
+	return small;
+}
+
+
+void findMaxK(int s[],int begin,int end,int k)
+{
+	if(s==NULL||k<=0||begin>=end) return;
+	if(k>=end-begin+1){
+		for(int i=begin;i<=end;++i)
+			printf("%d ",s[i]);
+		return;
+	}
+	int index=partition(s,begin,end);
+	if(k>=end-index+1){
+		for(int i=index;i<=end;++i)
+			printf("%d ",s[i]);
+		if(k>end-index+1)
+			findMaxK(s,begin,index-1,k-end+index-1);
+	}else{
+		findMaxK(s,index,end,k);
+	}
+}
+
+void findMaxKinWhile(int s[],int begin,int end,int k)
+{
+	if(s==NULL||k<=0||begin>end||k>end-begin+1) return;
+	int index=partition(s,begin,end);
+	while(index!=end-begin-k+1){
+		if(index<end-begin-k+1)
+			index=partition(s,index+1,end);
+		else
+			index=partition(s,begin,index-1);
+	}
+	for(int i=index;i<=end;++i)
+		printf("%d ",s[i]);
+}
+
+void findMaxKwithHeap(int s[],int begin,int end)
+{
+	
+}
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	srand((unsigned)time(NULL));
+	int s[]={4,2,7,8,3};
+	//int result=partition(s,0,4);
+	//findMaxK(s,0,4,3);
+	findMaxKinWhile(s,0,4,5);
+	getchar();
+	return 0;
+}
