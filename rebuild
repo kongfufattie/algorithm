@@ -1,0 +1,43 @@
+// rebuild.cpp : 定义控制台应用程序的入口点。
+//
+
+#include "stdafx.h"
+char pre[]={'a','b','d','e','f','c'};
+char in[] ={'d','b','e','a','f','c'};
+
+typedef struct Node{
+	char key;
+	Node* l;
+	Node* r;
+}Node;
+
+//二叉树的前中序列重建二叉树
+Node* rebuild(int pBegin,int pEnd,int iBegin,int iEnd)
+{
+	Node* n=new Node();
+	if(iBegin>iEnd) return NULL;
+	if(iBegin==iEnd){
+		n->key=in[iBegin];
+		return n;
+	}
+	int index=-1;
+	char root=pre[pBegin];
+	for(int i=iBegin;i<=iEnd;++i){
+		if(in[i]==root)
+			index=i;
+	}
+	if(index!=-1){
+		n->key=root;
+		n->l=rebuild(pBegin+1,pBegin+index-iBegin,iBegin,index-1);
+		n->r=rebuild(pBegin+index-iBegin+1,pEnd,index+1,iEnd);
+		return n;
+	}
+}
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	Node* root=rebuild(0,5,0,5);
+	getchar();
+	return 0;
+}
+
