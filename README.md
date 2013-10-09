@@ -1,0 +1,4 @@
+algorithm
+=========
+
+prepare for interview
