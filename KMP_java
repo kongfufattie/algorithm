@@ -1,3 +1,68 @@
-//41404140004140414 
+
+
+public class StringMatcher
+{
+public int simpleMatch(char[] src,char[] pattern){
+  int srcIndex=0;
+  int patternIndex=0;
+  while(srcIndex<src.length&&patternIndex<pattern.length){
+    if(src[srcIndex]==pattern[patternIndex]){
+      ++srcIndex;
+      ++patternIndex;
+    }else{
+      srcIndex-=patternIndex-1;
+      patternIndex=0;
+    }
+  }
+  if(patternIndex==pattern.length)
+    return srcIndex-pattern.length;
+  return -1;
+}
+
+public int kmpMatch(char[] src,char[] pattern){
+  int[] overlay=getOverlayValue(pattern);
+  int srcIndex=0;
+  int patternIndex=0;
+  while(srcIndex<src.length&&patternIndex<pattern.length){
+    if(src[srcIndex]==pattern[patternIndex]){
+      ++srcIndex;
+      ++patternIndex;
+    }else if(patternIndex==0){
+      ++srcIndex;
+    }else{
+      patternIndex=overlay[patternIndex-1]+1;
+    }
+  }
+  if(patternIndex==pattern.length)
+    return srcIndex-pattern.length;
+  return -1;
+}
+//41404140004140414
 //when new j is 4, index 6->2->0->-1, and return 0;
-//when new j is 1, index 6->2->0,     and return 1;
+//when new j is 1, index 6->2->0, and return 1;
+private int[] getOverlayValue(char[] pattern){
+  int[] overlay=new int[pattern.length];
+  int index=0;
+  overlay[index]=-1;
+  for(int i=1;i<pattern.length;++i){
+    index=overlay[i-1];
+    while(index>=0&&pattern[i]!=pattern[index+1]){
+      index=overlay[index];
+    }
+    if(pattern[i]==pattern[index+1]){
+      overlay[i]=index+1;
+    }else{
+      overlay[i]=-1;
+    }
+  }
+  return overlay;
+}
+
+public static void main(String[] args){
+  StringMatcher sm=new StringMatcher();
+  String src="annbcdanacadsannannabnna";
+  String pattern="annacanna";
+  System.out.println(sm.simpleMatch(src.toCharArray(), pattern.toCharArray()));
+  System.out.println(sm.kmpMatch(src.toCharArray(), pattern.toCharArray()));
+}
+}
